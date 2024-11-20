@@ -1,0 +1,13 @@
+### get health status
+GET http://localhost:8080/health
+
+### post echo
+POST http://localhost:8080/echo
+Content-Type: application/json
+
+{
+  "message": "hello"
+}
+
+### get time
+GET http://localhost:8080/time
