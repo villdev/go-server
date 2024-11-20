@@ -12,16 +12,34 @@ var serverStartTime time.Time
 
 func main() {
 	serverStartTime = time.Now()
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		payload := map[string]string{
-			"status": "ok",
-			"uptime": formatTime(time.Since(serverStartTime)),
-		}
-		respondWithJSON(w, http.StatusOK, payload)
-	})
+
+	http.HandleFunc("/health", handleGetHealth)
+	http.HandleFunc("/echo", handlePostEcho)
 
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func handleGetHealth(w http.ResponseWriter, r *http.Request) {
+	payload := map[string]string{
+		"status": "ok",
+		"uptime": formatTime(time.Since(serverStartTime)),
+	}
+	respondWithJSON(w, http.StatusOK, payload)
+}
+
+func handlePostEcho(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		respondWithJSON(w, http.StatusMethodNotAllowed, map[string]string{"error": "method not allowed"})
+		return
+	}
+
+	var body interface{}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		respondWithJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
+		return
+	}
+	respondWithJSON(w, http.StatusOK, body)
 }
 
 func respondWithJSON(w http.ResponseWriter, statusCode int, payload interface{}) {
