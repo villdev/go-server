@@ -15,6 +15,7 @@ func main() {
 
 	http.HandleFunc("/health", handleGetHealth)
 	http.HandleFunc("/echo", handlePostEcho)
+	http.HandleFunc("/time", handleGetTime)
 
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -40,6 +41,13 @@ func handlePostEcho(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJSON(w, http.StatusOK, body)
+}
+
+func handleGetTime(w http.ResponseWriter, r *http.Request) {
+	payload := map[string]string{
+		"time": time.Now().UTC().Format(time.RFC3339),
+	}
+	respondWithJSON(w, http.StatusOK, payload)
 }
 
 func respondWithJSON(w http.ResponseWriter, statusCode int, payload interface{}) {
