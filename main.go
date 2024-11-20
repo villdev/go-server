@@ -35,6 +35,11 @@ func handlePostEcho(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.Body == nil || r.ContentLength == 0 {
+		respondWithJSON(w, http.StatusBadRequest, map[string]string{"error": "request body is empty"})
+		return
+	}
+
 	var body interface{}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		respondWithJSON(w, http.StatusBadRequest, map[string]string{"error": err.Error()})
