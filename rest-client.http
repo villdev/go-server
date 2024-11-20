@@ -1,3 +1,5 @@
+# Uses - https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
 ### get health status
 GET http://localhost:8080/health
 
